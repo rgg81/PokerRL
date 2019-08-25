@@ -40,6 +40,8 @@ class DiscretizedPokerEnv(_PokerEnv):
         self.bet_sizes_list_as_frac_of_pot = sorted(env_args.bet_sizes_list_as_frac_of_pot)  # ascending
         self.N_ACTIONS = env_args.N_ACTIONS
         self.uniform_action_interpolation = env_args.uniform_action_interpolation
+        if hasattr(env_args, 'custom_deck') and env_args.custom_deck is not None:
+            self.deck = env_args.custom_deck
 
     def _adjust_raise(self, raise_total_amount_in_chips):
         return max(self._get_current_total_min_raise(), raise_total_amount_in_chips)

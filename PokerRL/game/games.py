@@ -180,6 +180,7 @@ class NoLimitHoldem(HoldemRules, NoLimitPokerEnv):
 
     SMALL_BLIND = 50
     BIG_BLIND = 100
+
     ANTE = 0
     DEFAULT_STACK_SIZE = 20000
 
@@ -203,10 +204,15 @@ class DiscretizedNLHoldem(HoldemRules, DiscretizedPokerEnv):
     IS_FIXED_LIMIT_GAME = False
     IS_POT_LIMIT_GAME = False
 
-    SMALL_BLIND = 50
-    BIG_BLIND = 100
+    # SMALL_BLIND = 50
+    # BIG_BLIND = 100
+
+    SMALL_BLIND = 10
+    BIG_BLIND = 20
+
     ANTE = 0
-    DEFAULT_STACK_SIZE = 20000
+    # DEFAULT_STACK_SIZE = 20000
+    DEFAULT_STACK_SIZE = 500
 
     EV_NORMALIZER = 1000.0 / BIG_BLIND  # Milli BB
     WIN_METRIC = Poker.MeasureBB

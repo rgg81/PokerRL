@@ -2,6 +2,7 @@ from . import PokerEnvStateDictEnums
 from . import bet_sets
 from .AgentTournament import *
 from .InteractiveGame import *
+from .InteractiveGameCustom import *
 from .Poker import *
 from .PokerRange import *
 from .games import StandardLeduc, BigLeduc, NoLimitLeduc, DiscretizedNLLeduc, LimitHoldem, NoLimitHoldem, \

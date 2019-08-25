@@ -303,6 +303,7 @@ class LutHolderHoldem(_LutHolderBase):
         super().__init__(lut_getter=_LutGetterHoldem(env_cls=env_cls))
 
     def get_range_idx_from_hole_cards(self, hole_cards_2d):
+
         _c1 = self.LUT_2DCARD_2_1DCARD[hole_cards_2d[0, 0]][hole_cards_2d[0, 1]]
         _c2 = self.LUT_2DCARD_2_1DCARD[hole_cards_2d[1, 0]][hole_cards_2d[1, 1]]
 

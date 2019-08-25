@@ -11,7 +11,7 @@ class _PokerEnvArgs:
                  use_simplified_headsup_obs=True,
                  return_pre_transition_state_in_info=False,
                  *args,
-                 **kwargs,
+                 **kwargs
                  ):
         """
         Args:
@@ -82,6 +82,7 @@ class DiscretizedPokerEnvArgs(_PokerEnvArgs):
                  use_simplified_headsup_obs=True,
                  scale_rewards=True,
                  return_pre_transition_state_in_info=False,
+                 custom_deck=None,
                  *args, **kwargs):
         """
         Args:
@@ -106,6 +107,8 @@ class DiscretizedPokerEnvArgs(_PokerEnvArgs):
         self.bet_sizes_list_as_frac_of_pot = bet_sizes_list_as_frac_of_pot
         self.uniform_action_interpolation = uniform_action_interpolation
         self.N_ACTIONS = len(self.bet_sizes_list_as_frac_of_pot) + 2  # +2 is for FOLD and CHECK/CALL.
+        self.custom_deck = custom_deck
+
 
 
 class LimitPokerEnvArgs(_PokerEnvArgs):

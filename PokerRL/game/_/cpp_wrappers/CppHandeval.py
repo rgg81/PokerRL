@@ -40,7 +40,9 @@ class CppHandeval(CppWrapper):
         Returns:
             int: integer representing strength of the strongest 5card hand in the 7 cards. higher is better.
         """
-        return self._clib.get_hand_rank_52_holdem(self.np_2d_arr_to_c(hand_2d), self.np_2d_arr_to_c(board_2d))
+
+        rank = self._clib.get_hand_rank_52_holdem(self.np_2d_arr_to_c(hand_2d), self.np_2d_arr_to_c(board_2d))
+        return rank
 
     def get_hand_rank_all_hands_on_given_boards_52_holdem(self, boards_1d, lut_holder):
         """

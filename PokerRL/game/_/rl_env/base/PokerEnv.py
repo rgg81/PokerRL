@@ -370,13 +370,13 @@ class PokerEnv:
         # fill seats with players
         self.seats = [
             PokerPlayer(seat_id=i,
-                        poker_env=self,
-                        is_evaluating=is_evaluating,
-                        starting_stack=
-                        (a.starting_stack_sizes_list[i]
-                         if a.starting_stack_sizes_list[i] is not None
-                         else self.DEFAULT_STACK_SIZE),
-                        stack_randomization_range=a.stack_randomization_range)
+                    poker_env=self,
+                    is_evaluating=is_evaluating,
+                    starting_stack=
+                    (a.starting_stack_sizes_list[i]
+                     if a.starting_stack_sizes_list[i] is not None
+                     else self.DEFAULT_STACK_SIZE),
+                    stack_randomization_range=a.stack_randomization_range)
             for i in range(a.n_seats)]
 
     # __________________________________________________ TO OVERRIDE ___________________________________________________
@@ -785,6 +785,8 @@ class PokerEnv:
 
         else:
             raise RuntimeError("There seems to be an edge-case not built into this")
+        # if not self.IS_EVALUATING:
+        #     self.render(mode='TEXT')
 
         return self._get_current_step_returns(is_terminal=is_terminal, info=info)
 
@@ -1101,8 +1103,22 @@ class PokerEnv:
         self.n_actions_this_episode = 0
 
         # players
-        for p in self.seats:
-            p.reset()
+
+        if not self.IS_EVALUATING and self.N_SEATS == 2:
+            p0 = self.seats[0]
+            p1 = self.seats[1]
+            p0.reset()
+
+            chips0 = self._args.starting_stack_sizes_list[0] if self._args.starting_stack_sizes_list[0] is not None else self.DEFAULT_STACK_SIZE
+            chips1 = self._args.starting_stack_sizes_list[1] if self._args.starting_stack_sizes_list[1] is not None else self.DEFAULT_STACK_SIZE
+            total_chips_in_table = chips0 + chips1
+
+            stack0 = p0.starting_stack_this_episode
+            p1.reset(force_starting_stack_this_episode=total_chips_in_table-stack0)
+
+        else:
+            for p in self.seats:
+                p.reset()
 
         # reset deck
         self.deck.reset()
@@ -1113,11 +1129,15 @@ class PokerEnv:
         self._post_small_blind()
         self._post_big_blind()
         self.current_player = self._get_first_to_act_pre_flop()
+
         self._deal_next_round()
 
         # optionally synchronize random variables from another env
         if deck_state_dict is not None:
             self.load_cards_state_dict(cards_state_dict=deck_state_dict)
+
+        # if not self.IS_EVALUATING:
+        #     self.render(mode='TEXT')
 
         return self._get_current_step_returns(is_terminal=False, info=[False, None])
 
@@ -1436,7 +1456,7 @@ class PokerEnv:
         for p in self.seats:
             p.IS_EVALUATING = False
 
-    def render(self, mode='TEXT'):
+    def render(self, mode='TEXT', seats_human_plays_list=[]):
         """
         When called, renders the current state of the environment
 
@@ -1464,7 +1484,7 @@ class PokerEnv:
                       "stack: ", str(p.stack).rjust(8),
                       "current_bet: ", str(p.current_bet).rjust(8),
                       "side_pot_rank: ", str(p.side_pot_rank).rjust(8),
-                      "hand: ", self.cards2str(p.hand).rjust(8),
+                      "hand: ", self.cards2str(p.hand).rjust(8)  if p.seat_id in seats_human_plays_list or not self.IS_EVALUATING else "Xx, Xx",
 
                       # sidepots
                       " " * 18,
@@ -1512,6 +1532,9 @@ class PokerEnv:
 
     def get_args(self):
         return copy.deepcopy(self._args)
+
+    def get_deck(self):
+        return self.deck
 
     def set_args(self, env_args):
         self._init_from_args(env_args=env_args, is_evaluating=self.IS_EVALUATING)

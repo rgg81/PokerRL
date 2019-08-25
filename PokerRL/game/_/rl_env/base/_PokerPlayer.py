@@ -41,10 +41,12 @@ class PokerPlayer:
         # sets all the above
         self.reset()
 
-    def reset(self):
+    def reset(self, force_starting_stack_this_episode=None):
 
         if self.IS_EVALUATING or (self.stack_randomization_range[0] == 0 and self.stack_randomization_range[1] == 0):
             self.starting_stack_this_episode = self._base_starting_stack
+        elif force_starting_stack_this_episode is not None:
+            self.starting_stack_this_episode=force_starting_stack_this_episode
         else:
             self.starting_stack_this_episode = \
                 max(
@@ -64,6 +66,9 @@ class PokerPlayer:
         self.folded_this_episode = False
         self.has_acted_this_round = False
         self.side_pot_rank = -1
+
+        # if not self.IS_EVALUATING:
+        # print('player reset state:' + str(self.player_state()))
 
     def bet_raise(self, total_bet_amount):
         """

@@ -10,4 +10,5 @@ from .game.games import *
 from .game.Poker import *
 from .game.AgentTournament import *
 from .game.InteractiveGame import *
+from .game.InteractiveGameCustom import *
 from .game.wrappers import *
