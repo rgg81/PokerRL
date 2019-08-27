@@ -1087,11 +1087,13 @@ class PokerEnv:
             return balance_chips * factor_chips * factor_survive / self.REWARD_SCALAR
 
         sum_starting_chips = sum([p.starting_stack_this_episode for p in self.seats])
-        # return_result_original = [(p.stack - p.starting_stack_this_episode) / self.REWARD_SCALAR for p in self.seats]
+        return_result_original = [(p.stack - p.starting_stack_this_episode) / self.REWARD_SCALAR for p in self.seats]
         return_result = [custom_reward(p, sum_starting_chips) for p in self.seats]
         # print('rewards:{} original:{} reward scalar:{}'.format(return_result, return_result_original,self.REWARD_SCALAR))
-
-        return return_result
+        if not self.IS_EVALUATING:
+            return return_result
+        else:
+            return return_result_original
 
     # ______________________________________________________ API _______________________________________________________
     def reset(self, deck_state_dict=None):
