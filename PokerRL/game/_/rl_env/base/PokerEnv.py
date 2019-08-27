@@ -1071,7 +1071,27 @@ class PokerEnv:
     def _get_step_reward(self, is_terminal):
         if not is_terminal:
             return np.zeros(shape=self.N_SEATS, dtype=np.float32)
-        return [(p.stack - p.starting_stack_this_episode) / self.REWARD_SCALAR for p in self.seats]
+
+        def custom_reward(p, sum_starting_chips):
+            balance_chips = p.stack - p.starting_stack_this_episode
+            factor_chips = abs(balance_chips/p.starting_stack_this_episode)
+            if balance_chips < 0:
+                factor_survive = 1 if p.stack > 0.1*sum_starting_chips else 5
+            elif balance_chips > 0:
+                factor_survive = 1 if p.stack < 0.9*sum_starting_chips else 5
+            else:
+                factor_survive = 1
+
+            # print('balance_chips:{} factor_chips:{} factor_survive:{} = {}'.format(balance_chips,factor_chips,factor_survive, balance_chips * factor_chips * factor_survive))
+
+            return balance_chips * factor_chips * factor_survive / self.REWARD_SCALAR
+
+        sum_starting_chips = sum([p.starting_stack_this_episode for p in self.seats])
+        # return_result_original = [(p.stack - p.starting_stack_this_episode) / self.REWARD_SCALAR for p in self.seats]
+        return_result = [custom_reward(p, sum_starting_chips) for p in self.seats]
+        # print('rewards:{} original:{} reward scalar:{}'.format(return_result, return_result_original,self.REWARD_SCALAR))
+
+        return return_result
 
     # ______________________________________________________ API _______________________________________________________
     def reset(self, deck_state_dict=None):
