@@ -1091,6 +1091,7 @@ class PokerEnv:
         return_result = [custom_reward(p, sum_starting_chips) for p in self.seats]
         # print('rewards:{} original:{} reward scalar:{}'.format(return_result, return_result_original,self.REWARD_SCALAR))
         if not self.IS_EVALUATING:
+            # print('rewards:{} original:{} reward scalar:{}'.format(return_result, return_result_original,self.REWARD_SCALAR))
             return return_result
         else:
             return return_result_original
