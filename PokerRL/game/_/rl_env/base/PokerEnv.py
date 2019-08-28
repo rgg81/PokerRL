@@ -678,7 +678,7 @@ class PokerEnv:
         self.current_round += 1  # highly dependant on PokerEnv.""ROUND_NAME"" being sequential ints!
         self._deal_next_round()
 
-    def _step(self, processed_action):
+    def _step(self, processed_action, custom_reward=True):
         """
         the action passed is considered to be for self.current_player and come from its respective agent (if applicable
         to your algorithm).
@@ -693,7 +693,6 @@ class PokerEnv:
         Returns:
             obs, rew_for_all_players, done?, info
         """
-
         # After this call, this fn assumes that executing the action is legal.
         processed_action = self._get_fixed_action(action=processed_action)
 
@@ -788,7 +787,7 @@ class PokerEnv:
         # if not self.IS_EVALUATING:
         #     self.render(mode='TEXT')
 
-        return self._get_current_step_returns(is_terminal=is_terminal, info=info)
+        return self._get_current_step_returns(is_terminal=is_terminal, info=info, custom_reward=custom_reward)
 
     # _____________________________________________________ UTIL  ______________________________________________________
     def _get_winner_list(self, players_to_consider):
@@ -956,9 +955,12 @@ class PokerEnv:
         return True
 
     # _____________________________________________________ OUTPUT _____________________________________________________
-    def _get_current_step_returns(self, is_terminal, info):
+    def _get_current_step_returns(self, is_terminal, info, custom_reward=True):
         obs = self.get_current_obs(is_terminal)
-        reward = self._get_step_reward(is_terminal)
+        if custom_reward:
+            reward = self._get_step_reward(is_terminal)
+        else:
+            reward = self._get_step_reward_original(is_terminal)
         return obs, reward, is_terminal, info
 
     def _get_player_states_all_players(self, normalization_sum):
@@ -1087,14 +1089,17 @@ class PokerEnv:
             return balance_chips * factor_chips * factor_survive / self.REWARD_SCALAR
 
         sum_starting_chips = sum([p.starting_stack_this_episode for p in self.seats])
-        return_result_original = [(p.stack - p.starting_stack_this_episode) / self.REWARD_SCALAR for p in self.seats]
         return_result = [custom_reward(p, sum_starting_chips) for p in self.seats]
-        # print('rewards:{} original:{} reward scalar:{}'.format(return_result, return_result_original,self.REWARD_SCALAR))
-        if not self.IS_EVALUATING:
-            # print('rewards:{} original:{} reward scalar:{}'.format(return_result, return_result_original,self.REWARD_SCALAR))
-            return return_result
-        else:
-            return return_result_original
+        return return_result
+
+
+    def _get_step_reward_original(self, is_terminal):
+        if not is_terminal:
+            return np.zeros(shape=self.N_SEATS, dtype=np.float32)
+
+        return_result_original = [(p.stack - p.starting_stack_this_episode) / self.REWARD_SCALAR for p in self.seats]
+        return return_result_original
+
 
     # ______________________________________________________ API _______________________________________________________
     def reset(self, deck_state_dict=None):

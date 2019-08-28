@@ -113,7 +113,7 @@ class InteractiveGameCustom:
                     else:
                         action_tuple = [a_idx, -1]
 
-                obs, rews, done, info = self._env._step(processed_action=action_tuple)
+                obs, rews, done, info = self._env._step(processed_action=action_tuple, custom_reward=False)
 
                 self._env.render(mode=render_mode, seats_human_plays_list=self._seats_human_plays_list)
 
