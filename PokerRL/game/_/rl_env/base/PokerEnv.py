@@ -1078,9 +1078,24 @@ class PokerEnv:
             balance_chips = p.stack - p.starting_stack_this_episode
             factor_chips = abs(balance_chips/p.starting_stack_this_episode)
             if balance_chips < 0:
-                factor_survive = 1 if p.stack > 0.1*sum_starting_chips else 5
+                if p.stack <= 0.1*sum_starting_chips:
+                    factor_survive = 5
+                elif p.stack <= 0.2*sum_starting_chips:
+                    factor_survive = 3
+                elif p.stack <= 0:
+                    factor_survive = 7
+                else:
+                    factor_survive = 1
+
             elif balance_chips > 0:
-                factor_survive = 1 if p.stack < 0.9*sum_starting_chips else 5
+                if p.stack >= 0.9*sum_starting_chips:
+                    factor_survive = 5
+                elif p.stack >= 0.8*sum_starting_chips:
+                    factor_survive = 3
+                elif p.stack >= 1.0*sum_starting_chips:
+                    factor_survive = 7
+                else:
+                    factor_survive = 1
             else:
                 factor_survive = 1
 
