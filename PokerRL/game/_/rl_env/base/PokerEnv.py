@@ -1076,32 +1076,26 @@ class PokerEnv:
 
         def custom_reward(p, sum_starting_chips):
             balance_chips = p.stack - p.starting_stack_this_episode
-            factor_chips = abs(balance_chips/p.starting_stack_this_episode)
+            # factor_chips = abs(balance_chips/p.starting_stack_this_episode)
             if balance_chips < 0:
-                if p.stack <= 0.1*sum_starting_chips:
-                    factor_survive = 5
-                elif p.stack <= 0.2*sum_starting_chips:
-                    factor_survive = 3
-                elif p.stack <= 0:
-                    factor_survive = 7
+                if p.stack == 0:
+                    factor_survive = 2
                 else:
                     factor_survive = 1
 
             elif balance_chips > 0:
-                if p.stack >= 0.9*sum_starting_chips:
-                    factor_survive = 5
-                elif p.stack >= 0.8*sum_starting_chips:
-                    factor_survive = 3
-                elif p.stack >= 1.0*sum_starting_chips:
-                    factor_survive = 7
+                if p.stack == sum_starting_chips:
+                    factor_survive = 2
                 else:
                     factor_survive = 1
+                # only for positive
+                # factor_survive = factor_survive * factor_chips
             else:
                 factor_survive = 1
 
             # print('balance_chips:{} factor_chips:{} factor_survive:{} = {}'.format(balance_chips,factor_chips,factor_survive, balance_chips * factor_chips * factor_survive))
 
-            return balance_chips * factor_chips * factor_survive / self.REWARD_SCALAR
+            return balance_chips * factor_survive / self.REWARD_SCALAR
 
         sum_starting_chips = sum([p.starting_stack_this_episode for p in self.seats])
         return_result = [custom_reward(p, sum_starting_chips) for p in self.seats]
