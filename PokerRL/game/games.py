@@ -207,8 +207,8 @@ class DiscretizedNLHoldem(HoldemRules, DiscretizedPokerEnv):
     # SMALL_BLIND = 50
     # BIG_BLIND = 100
 
-    SMALL_BLIND = 20
-    BIG_BLIND = 40
+    SMALL_BLIND = 25
+    BIG_BLIND = 50
 
     ANTE = 0
     # DEFAULT_STACK_SIZE = 20000
